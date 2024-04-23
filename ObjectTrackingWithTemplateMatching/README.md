@@ -19,11 +19,9 @@ Correlation Coefficient Normalized algorithm performed the best when asked to tr
 "%" denotes the command prompt
 
 1) Start the program: % python template_matching.py
-2) Repeat "3" times:
-   - Take a picture by pressing "q" on the keyboard.
+2) Take a picture by pressing "q" on the keyboard.
+3) Repeat three times
    - Draw a bouding box around the object to track
-3) Enter the labels for the 3 objects being tracked on the command line
-    - % label1
-    - % label2
-    - % label3
-4) After enterning the last label, the program will begin tracking automatically. Press "q" on the keyboard to cycle through the trackers.
+   - Enter the label for the object in the command line
+4) After enterning the last label, the program will begin tracking automatically.
+5) Press "q" on the keyboard to cycle through the trackers. The current tracker is printed to the window and to the command line.
