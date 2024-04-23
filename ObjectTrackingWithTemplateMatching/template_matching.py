@@ -8,39 +8,30 @@ NUMBER_OBJECTS = 3
 vid = cv.VideoCapture(0)
 
 ret, frame = None, None
-
 ROIs = []
 labels =[]
-while (len(ROIs) < NUMBER_OBJECTS):
-    while(True):
-        
-        # Capture the video frame
-        # by frame
+#The following loop will prompt the user to take a picture as many time as there are objects to 
+while(True):
         ret, frame = vid.read()
-
         # Display the resulting frame
         cv.imshow('frame', frame)
-
         # the 'q' button is set as the
         # quitting button you may use any
         # desired button of your choice
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
-
-
-
-    img = frame
+img = frame
+while (len(ROIs) < NUMBER_OBJECTS):
     assert img is not None, "file could not be read, check with os.path.exists()"
-    img2 = img.copy()
-
-    ROIs.append(cv.selectROI("select the area", img2))
+    #img_copy = img.copy()
+    ROIs.append(cv.selectROI("select the area", img))
     cv.destroyAllWindows()
 
 labels.append(input("Enter the label of the first object: "))
 labels.append(input("Enter the label of the second object: "))
 labels.append(input("Enter the label of the thrid object: "))
 # Crop image
-templates = [img2[int(r[1]):int(r[1]+r[3]), 
+templates = [img[int(r[1]):int(r[1]+r[3]), 
                 int(r[0]):int(r[0]+r[2])] for r in ROIs]
 
 ws = []
