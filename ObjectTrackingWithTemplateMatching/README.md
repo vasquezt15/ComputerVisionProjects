@@ -1,19 +1,29 @@
-Instructions
+# Template Matching for Object Tracking
+## Summary
+This program tracks three objects using 6 different template matching algorithms
+- Template Matching Correlation Coefficient
+- Template Matching Correlation Coefficient Normalized
+- Template Matching Cross-Correlation
+- Template Matching Cross-Correlation Normalized
+- Template Matching Squared Difference
+- Template Matching Squared Difference Normalized
+and the users desktop camera.
 
->>> python template_matching.py
+## Goal
+To compare and contrasts these algorithms and to analyze the challenges encountered by object tracking algorithms in general.
 
-The program will open up the desktop camera. 
+## Findings
+Correlation Coefficient Normalized algorithm performed the best when asked to track a subject's glasses, a t-shirt logo, and a can the subject was holding. Cross Correlation performed the worst.
 
-Repeat "3" times:
-1) Take a picture by pressing "q" on the keyboard. 
-    >>> q
-2) Draw a bouding box around the object to track
+## Instructions
+"%" denotes the command prompt
 
-Then enter the labels for the 3 objects being tracked
- >>> label1
- >>> label2
- >>> label3
-
-The program then opens the desktop camera and begins tracking and recording. 
-
-The user may now press "q" on the keyboard to cycle through the trackers and compare their performance.
+1) Start the program: % python template_matching.py
+2) Repeat "3" times:
+   - Take a picture by pressing "q" on the keyboard.
+   - Draw a bouding box around the object to track
+3) Enter the labels for the 3 objects being tracked on the command line
+    - % label1
+    - % label2
+    - % label3
+4) After enterning the last label, the program will begin tracking automatically. Press "q" on the keyboard to cycle through the trackers.
