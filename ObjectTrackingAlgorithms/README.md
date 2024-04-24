@@ -18,4 +18,4 @@ The Channel and Spatial Reliability Tracker had the highest avg IoU score across
    1) "average_algorithm_performance.csv" contains the avg IoU values for each algorithm across all videos
    2) "output.csv" contains the average IoU score of each tracker on each video
    3) "ranked_algorithms.csv" the contains each video and a list of the trackers ranked by IoU score.
-   4) 
+4) It will also plot a histogram with the frequency of each algorithm being the top performing
