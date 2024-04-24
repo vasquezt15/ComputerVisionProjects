@@ -77,7 +77,6 @@ if __name__ == '__main__' :
             #update truth box to pixel coordinates with repect to the current frame
             tbox = (int((truth_file[count][0]- truth_file[count][2]*.5) *frame.shape[1]) , int((truth_file[count][1]- truth_file[count][3]*.5)* frame.shape[0]), int(truth_file[count][2]* frame.shape[1]), int(truth_file[count][3]* frame.shape[0]))
             new_truth_boxes.append(tbox)
-            print(bbox,tbox)
             # Calculate Frames per second (FPS)
             fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
     
@@ -86,7 +85,10 @@ if __name__ == '__main__' :
                 # Tracking success
                 p1 = (int(bbox[0]), int(bbox[1]))
                 p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
+                p11 = (int(tbox[0]), int(tbox[1]))
+                p22 = (int(tbox[0] + tbox[2]), int(tbox[1] + tbox[3]))
                 cv2.rectangle(frame, p1, p2, (255,0,0), 2, 1)
+                cv2.rectangle(frame, p11, p22, (0,255,0), 2, 1)
             else :
                 # Tracking failure
                 cv2.putText(frame, "Tracking failure detected", (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2)
@@ -99,7 +101,7 @@ if __name__ == '__main__' :
     
             # Display result
             cv2.imshow("Tracking", frame)
-    
+            count+=1
             # Exit if ESC pressed
             k = cv2.waitKey(1) & 0xff
             if k == 27 : break
