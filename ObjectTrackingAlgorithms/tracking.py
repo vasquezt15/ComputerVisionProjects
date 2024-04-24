@@ -57,11 +57,12 @@ if __name__ == '__main__' :
         if not ok:
             print('Cannot read video file')
             sys.exit()
-       
         bbox = (int((bb_box[0]- bb_box[2]*.5) *frame.shape[1]) , int((bb_box[1]- bb_box[3]*.5)* frame.shape[0]), int(bb_box[2]* frame.shape[1]), int(bb_box[3]* frame.shape[0]))
         pred_boxes = [bbox]
+        new_truth_boxes = [bbox]
         # Initialize tracker with first frame and bounding box
         ok = tracker.init(frame, bbox)
+        count = 1
         print("begin tracking")
         while True:
             # Read a new frame
@@ -73,6 +74,10 @@ if __name__ == '__main__' :
             ok, bbox = tracker.update(frame)
 
             pred_boxes.append(bbox)
+            #update truth box to pixel coordinates with repect to the current frame
+            tbox = (int((truth_file[count][0]- truth_file[count][2]*.5) *frame.shape[1]) , int((truth_file[count][1]- truth_file[count][3]*.5)* frame.shape[0]), int(truth_file[count][2]* frame.shape[1]), int(truth_file[count][3]* frame.shape[0]))
+            new_truth_boxes.append(tbox)
+            print(bbox,tbox)
             # Calculate Frames per second (FPS)
             fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
     
