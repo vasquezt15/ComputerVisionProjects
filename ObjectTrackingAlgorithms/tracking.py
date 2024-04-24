@@ -1,8 +1,10 @@
 import cv2
 import sys
 import numpy as np
+import pandas as pd
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 import numpy as np
+import matplotlib.pyplot as plt
 def box_iou(box1, box2):
     """
     Calculate the Intersection over Union (IoU) of two bounding boxes.
@@ -60,7 +62,7 @@ if __name__ == '__main__' :
     video_file_names = ["DVD.mp4","race-trimmed.mp4","workout.mp4", "snowboard.mp4", "plane2.MP4" ]
     truth_file_names = ["dvd_labels.txt", "race_labels.txt", "workout.txt", "snowboard_labels.txt",  "plane_labels.txt"]
     bbox_start =[]
-    output_dictionary = {"Algorithm": [], "Video": [], "IoU": [], "status":True}
+    output_dictionary = {"Algorithm": [], "Video": [], "IoU": [], "status":[]}
     
     #Loop over the trackers
     for tracker_name in tracker_types:
@@ -107,6 +109,8 @@ if __name__ == '__main__' :
             ok = tracker.init(frame, bbox)
             #dummy variable to index into the truth_files. Used for converting the entries in the truth file from normalized to pixel coordinates
             count = 1
+            #boolean to indicate if a tracking failure happened
+            status = True
             print("begin tracking")
             while True:
                 # Read a new frame
@@ -139,7 +143,7 @@ if __name__ == '__main__' :
                 else :
                     # Tracking failure
                     cv2.putText(frame, "Tracking failure detected", (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2)
-                    output_dictionary["status"] =False
+                    status = True
         
                 # Display tracker type on frame
                 cv2.putText(frame, tracker_name + " Tracker", (100,20), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50,170,50),2)
@@ -167,7 +171,34 @@ if __name__ == '__main__' :
             output_dictionary["Algorithm"].append(tracker_name)
             output_dictionary["Video"].append(video_file_names[i])
             output_dictionary["IoU"].append(avg_iou)
+            output_dictionary["status"].append(status)
             video.release()
             cv2.destroyAllWindows()
-    print(output_dictionary)
+    output_dataframe = pd.DataFrame(output_dictionary)
+    output_dataframe.to_csv('output.csv', index=False)
+    result = output_dataframe.groupby('Video').apply(
+    lambda x: sorted(zip(x['Algorithm'], x['IoU']), key=lambda pair: pair[1], reverse=True)
+                                        ).reset_index(name='Ranked Algorithms')
+    result.to_csv('ranked_algorithms.csv', index=False)
+    # Extract the top performer from each list
+    top_performers = result['Ranked Algorithms'].apply(lambda x: x[0][0])
+    # Count the frequency of each algorithm being the top performer
+    average_performance = output_dataframe.groupby('Algorithm')['IoU'].mean().reset_index()
+    # Rename the columns for clarity
+    average_performance.columns = ['Algorithm', 'Average IoU']
+    # Save the DataFrame to a CSV file
+    average_performance.to_csv('average_algorithm_performance.csv', index=False)
+    
+    performance_counts = top_performers.value_counts()
+   
+    # Plotting the histogram
+    plt.figure(figsize=(8, 4))
+    performance_counts.plot(kind='bar', color='skyblue')
+    plt.title('Number of Times Algorithms Outperformed Others')
+    plt.xlabel('Algorithm')
+    plt.ylabel('Number of Times Outperformed')
+    plt.xticks(rotation=0)
+    plt.show()
+    plt.savefig('algorithm_performance_histogram.png') 
+    
         
