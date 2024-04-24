@@ -6,7 +6,22 @@ from torchvision import ops
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 import numpy as np
 
-
+def convert_to_x1y1x2y2(bbox):
+    """
+    Convert bounding box coordinates from [x1, y1, width, height] to [x1, y1, x2, y2] format.
+    
+    Parameters:
+    bbox: bounding box coordinates in [x, y, width, height] format.
+    
+    Returns:
+    An array [x1, y1, x2, y] representing the bounding box in [x1, y1, x2, y2] format.
+    """
+    x, y, width, height = bbox
+    x1 = int(x)
+    y1 = int(y)
+    x2 = int(x + width)
+    y2 = int(y + height)
+    return [x1, y1, x2, y2]
 
 if __name__ == '__main__' :
  
@@ -105,3 +120,7 @@ if __name__ == '__main__' :
             # Exit if ESC pressed
             k = cv2.waitKey(1) & 0xff
             if k == 27 : break
+        pred_boxes = np.array([convert_to_x1y1x2y2(bbox) for bbox in pred_boxes])
+        new_truth_boxes = np.array([convert_to_x1y1x2y2(bbox) for bbox in new_truth_boxes])
+        print(pred_boxes[10],new_truth_boxes[10])
+    
