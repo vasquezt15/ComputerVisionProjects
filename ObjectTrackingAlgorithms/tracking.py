@@ -5,7 +5,37 @@ import torch
 from torchvision import ops
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 import numpy as np
+def box_iou(box1, box2):
+    """
+    Calculate the Intersection over Union (IoU) of two bounding boxes.
 
+    Parameters:
+    box1: [x1, y1, x2, y2]
+    box2: [x1, y1, x2, y2]
+    
+    Returns:
+    Intersection over Union (IoU) score.
+    """
+    # Calculate the coordinates of the intersection area
+    x1_i = max(box1[0], box2[0])
+    y1_i = max(box1[1], box2[1])
+    x2_i = min(box1[2], box2[2])
+    y2_i = min(box1[3], box2[3])
+
+    # Calculate intersection area
+    intersection_area = max(0, x2_i - x1_i + 1) * max(0, y2_i - y1_i + 1)
+
+    # Calculate the area of each bounding box
+    box1_area = (box1[2] - box1[0] + 1) * (box1[3] - box1[1] + 1)
+    box2_area = (box2[2] - box2[0] + 1) * (box2[3] - box2[1] + 1)
+
+    # Calculate the union area
+    union_area = box1_area + box2_area - intersection_area
+
+    # Calculate the Intersection over Union (IoU)
+    iou = intersection_area / union_area
+
+    return iou
 def convert_to_x1y1x2y2(bbox):
     """
     Convert bounding box coordinates from [x1, y1, width, height] to [x1, y1, x2, y2] format.
@@ -120,7 +150,10 @@ if __name__ == '__main__' :
             # Exit if ESC pressed
             k = cv2.waitKey(1) & 0xff
             if k == 27 : break
-        pred_boxes = np.array([convert_to_x1y1x2y2(bbox) for bbox in pred_boxes])
-        new_truth_boxes = np.array([convert_to_x1y1x2y2(bbox) for bbox in new_truth_boxes])
-        print(pred_boxes[10],new_truth_boxes[10])
-    
+        pred_boxes = [convert_to_x1y1x2y2(p_box) for p_box in pred_boxes]
+        new_truth_boxes = [convert_to_x1y1x2y2(t_box) for t_box in new_truth_boxes]
+
+        iou = [box_iou(t_box,p_box) for (t_box,p_box) in  zip(new_truth_boxes,pred_boxes)]
+        avg_iou = sum(iou)/len(iou)
+        print(f"Video {video_file_names[i]}\n Average IoU:", avg_iou)
+        
